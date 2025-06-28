@@ -14,17 +14,9 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('surname');
-            $table->string('patronymic')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->text('about')->nullable();
-            $table->string('image')->nullable();
-            $table->boolean('is_admin')->default(false);
-            $table->boolean('is_confirmed')->default(false);
-            $table->string('telegram_username')->unique()->nullable();
-            $table->string('telegram_id')->unique()->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
