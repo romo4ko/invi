@@ -14,6 +14,6 @@ class GuestSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Guest::factory(10)->create();
+        \App\Models\Guest::factory(2)->create();
     }
 }
