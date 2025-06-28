@@ -40,7 +40,20 @@ class InviteResource extends Resource
                     ->relationship('guest', 'name')
                     ->required()
                     ->searchable()
+                    ->disabled(fn (Invite $invite): bool => $invite->guest_id !== null)
                     ->preload(),
+                Forms\Components\Select::make('event_id')
+                    ->label('Мероприятие')
+                    ->relationship('event', 'name')
+                    ->required()
+                    ->searchable()
+                    ->disabled(fn (Invite $invite): bool => $invite->event_id !== null)
+                    ->preload(),
+                Forms\Components\TextInput::make('slug')
+                    ->label('Ссылка')
+                    ->unique(Invite::class, 'slug', ignoreRecord: true)
+                    ->disabled(fn (Invite $invite): bool => $invite->slug !== null)
+                    ->default(fn (Invite $invite): string => $invite->slug ?? ''),
             ]);
     }
 
@@ -48,13 +61,56 @@ class InviteResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('guest.name')
+                    ->label('Гость')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('event.name')
+                    ->label('Мероприятие')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('approval')
+                    ->label('Статус')
+                    ->formatStateUsing(
+                        function (Invite $invite): string {
+                            if (is_null($invite->approval)) {
+                                return 'Не подтверждено';
+                            }
+                            return $invite->approval ? 'Подтверждено' : 'Отклонено';
+                        }
+                    )
+                    ->default('Не подтверждено')
+                    ->badge()
+                    ->color(function (Invite $invite): string {
+                        if (is_null($invite->approval)) {
+                            return 'gray';
+                        }
+                        return $invite->approval ? 'success' : 'danger';
+                    }),
+                Tables\Columns\TextColumn::make('slug')
+                    ->formatStateUsing(
+                        fn (Invite $invite): string => $invite->url
+                    )
+                    ->label('Ссылка')
+                    ->copyable()
+                    ->copyableState(
+                        fn (Invite $invite): string => $invite->url
+                    ),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('approval')
+                    ->options([
+                        '1' => 'Подтверждено',
+                        '0' => 'Отклонено',
+                    ])
+                    ->label('Статус'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('view')
+                    ->label('Перейти')
+                    ->url(fn (Invite $invite): string => $invite->url)
+                    ->icon('heroicon-o-eye')
+                    ->openUrlInNewTab()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -75,7 +131,6 @@ class InviteResource extends Resource
         return [
             'index' => Pages\ListInvites::route('/'),
             'create' => Pages\CreateInvite::route('/create'),
-            'edit' => Pages\EditInvite::route('/{record}/edit'),
         ];
     }
 }

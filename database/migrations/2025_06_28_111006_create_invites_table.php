@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('event_id')->constrained('events')->onDelete('cascade');
             $table->foreignId('guest_id')->constrained('guests')->onDelete('cascade');
             $table->string('approval')->nullable();
+            $table->string('slug')->unique();
             $table->timestamps();
         });
     }

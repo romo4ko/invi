@@ -47,6 +47,19 @@ class EventResource extends Resource
                 Forms\Components\RichEditor::make('content')
                     ->label('Текст приглашения')
                     ->columns(1),
+                Forms\Components\TextInput::make('caption')
+                    ->label('Подпись')
+                    ->nullable(),
+                Forms\Components\FileUpload::make('image')
+                    ->label('Фоновое изображение')
+                    ->rules(['image'])
+                    ->nullable()
+                    ->image()
+                    ->imageCropAspectRatio('1:1')
+                    ->disk('public')
+                    ->visibility('public')
+                    ->directory('events')
+                    ->nullable(),
             ]);
     }
 
@@ -54,7 +67,13 @@ class EventResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Название')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('datetime')
+                    ->label('Дата и время')
+                    ->dateTime('Y-m-d H:i')
+                    ->sortable(),
             ])
             ->filters([
                 //

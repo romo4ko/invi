@@ -10,6 +10,7 @@ class Invite extends Model
         'event_id',
         'guest_id',
         'approval',
+        'slug',
     ];
 
     public function event()
@@ -20,5 +21,10 @@ class Invite extends Model
     public function guest()
     {
         return $this->belongsTo(Guest::class);
+    }
+
+    public function getUrlAttribute(): string
+    {
+        return route('invite.show', ['slug' => $this->slug]);
     }
 }
