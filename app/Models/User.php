@@ -12,7 +12,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable
 {
     use HasFactory;
     use Notifiable;
@@ -20,16 +20,8 @@ class User extends Authenticatable implements FilamentUser
 
     protected $fillable = [
         'name',
-        'surname',
-        'patronymic',
         'email',
         'password',
-        'about',
-        'image',
-        'is_admin',
-        'is_confirmed',
-        'telegram_username',
-        'telegram_id',
     ];
 
     /**
@@ -53,10 +45,5 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return (bool) $this->is_admin;
     }
 }

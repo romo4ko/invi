@@ -20,7 +20,7 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 10;
 
     protected static ?string $navigationLabel = 'Пользователи';
 
@@ -50,25 +50,8 @@ class UserResource extends Resource
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->dehydrated(fn ($state) => filled($state))
                     ->required(fn (string $context): bool => $context === 'create'),
-                Forms\Components\Section::make()->schema([
-                    Forms\Components\TextInput::make('name')->label('Имя')
-                        ->required(),
-                    Forms\Components\TextInput::make('surname')->label('Фамилия'),
-                    Forms\Components\TextInput::make('patronymic')->label('Отчество'),
-                    Forms\Components\Textarea::make('about')->label('О себе')->rows(5),
-                ])->columns(),
-                Forms\Components\TextInput::make('telegram_username')
-                    ->label('Telegram username')
-                    ->unique()
-                    ->nullable(),
-                Forms\Components\TextInput::make('telegram_id')
-                    ->label('Telegram ID')
-                    ->disabled()
-                    ->nullable(),
-                Forms\Components\Section::make()->schema([
-                    Forms\Components\Checkbox::make('is_confirmed')->label('Проверен'),
-                    Forms\Components\Checkbox::make('is_admin')->label('Администратор'),
-                ])->columns(2),
+                Forms\Components\TextInput::make('name')->label('Имя')
+                    ->required(),
             ]);
     }
 
@@ -79,21 +62,11 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Имя')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('surname')
-                    ->label('Фамилия')
-                    ->default('-')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->label('Почта')
                     ->searchable(),
             ])
             ->defaultSort('created_at', 'desc')
-            ->filters([
-                Filter::make('is_confirmed')
-                    ->checkbox()
-                    ->query(fn (Builder $query): Builder => $query->whereNot('is_confirmed', true))
-                    ->label('Не верифицированные'),
-            ])
             ->actions([
                 Tables\Actions\EditAction::make()->label('Управление'),
             ])
