@@ -13,7 +13,6 @@ use Illuminate\Support\Str;
  */
 class GuestFactory extends Factory
 {
-
     /**
      * Define the model's default state.
      *

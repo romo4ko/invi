@@ -43,23 +43,27 @@ class EventResource extends Resource
                     ->label('Место проведения'),
                 Forms\Components\DateTimePicker::make('datetime')
                     ->required()
+                    ->seconds(false)
                     ->label('Дата и время'),
-                Forms\Components\RichEditor::make('content')
-                    ->label('Текст приглашения')
-                    ->columns(1),
                 Forms\Components\TextInput::make('caption')
                     ->label('Подпись')
                     ->nullable(),
-                Forms\Components\FileUpload::make('image')
-                    ->label('Фоновое изображение')
-                    ->rules(['image'])
-                    ->nullable()
-                    ->image()
-                    ->imageCropAspectRatio('1:1')
-                    ->disk('public')
-                    ->visibility('public')
-                    ->directory('events')
-                    ->nullable(),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\RichEditor::make('content')
+                            ->label('Текст приглашения')
+                            ->columns(1),
+                        Forms\Components\FileUpload::make('image')
+                            ->label('Фоновое изображение')
+                            ->rules(['image'])
+                            ->nullable()
+                            ->image()
+                            ->imageCropAspectRatio('1:1')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->directory('events')
+                            ->nullable(),
+                    ])
             ]);
     }
 

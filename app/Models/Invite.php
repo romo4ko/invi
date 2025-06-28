@@ -13,6 +13,10 @@ class Invite extends Model
         'slug',
     ];
 
+    protected $casts = [
+        'approval' => 'boolean',
+    ];
+
     public function event()
     {
         return $this->belongsTo(Event::class);
