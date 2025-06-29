@@ -121,6 +121,30 @@
             min-width: 120px;
         }
 
+        .btn-accept:hover,
+        .btn-accept:active,
+        .btn-accept:focus {
+            background-color: #28a745 !important;
+            border-color: #28a745 !important;
+            opacity: 0.6 !important;
+        }
+
+        .btn-decline:hover,
+        .btn-decline:active,
+        .btn-decline:focus {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            opacity: 0.6 !important;
+        }
+
+        .btn-cancel:hover,
+        .btn-cancel:active,
+        .btn-cancel:focus {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+            opacity: 0.6 !important;
+        }
+
         .response-message {
             text-align: center;
             margin-top: 1rem;
