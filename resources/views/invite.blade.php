@@ -22,16 +22,6 @@
             position: relative;
         }
 
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.85);
-            z-index: 1;
-        }
-
         .invitation-container {
             display: flex;
             flex-direction: column;
@@ -48,7 +38,7 @@
             width: 90%;
             margin: auto;
             padding: 3rem;
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: rgba(255, 255, 255, 0.3);
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -78,8 +68,8 @@
         .details {
             margin: 2rem 0;
             padding: 1.2rem;
-            background-color: rgba(255, 255, 255, 0.7);
-            border-left: 4px solid #d4af37;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-left: 4px solid #2c3e50;
         }
 
         .detail-item {
@@ -110,8 +100,8 @@
         .response-buttons {
             display: flex;
             justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
             flex-wrap: wrap;
         }
 
@@ -164,6 +154,14 @@
                 max-width: 220px;
             }
         }
+
+        .btn-accept,
+        .btn-decline,
+        .btn-cancel {
+            padding: 0.5rem 1rem; /* Уменьшен padding */
+            font-size: 0.9rem; /* Уменьшен размер шрифта */
+            min-width: 100px; /* Уменьшен минимальный размер */
+        }
     </style>
 </head>
 <body>
@@ -182,6 +180,10 @@
 
             <div class="content">
                 {!! $invite['event']['content'] !!}
+            </div>
+
+            <div class="caption">
+                {{ $invite['event']['caption'] }}
             </div>
 
             <div class="details">
@@ -216,10 +218,6 @@
                         <button class="btn btn-cancel btn-lg text-white" onclick="sendResponse(null)">Изменить решение</button>
                     </div>
                 @endif
-            </div>
-
-            <div class="caption">
-                {{ $invite['event']['caption'] }}
             </div>
         </div>
     </div>
