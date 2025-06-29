@@ -39,11 +39,9 @@
             margin: auto;
             padding: 3rem;
             background-color: rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
+            border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(5px);
-            flex-grow: 1; /* Растягиваем карточку */
             display: flex;
             flex-direction: column;
         }
@@ -133,7 +131,7 @@
         @media (max-width: 576px) {
             .invitation-card {
                 padding: 1.5rem;
-                width: 95%;
+                width: 90%;
             }
 
             .details {
