@@ -9,16 +9,13 @@
     <style>
         body {
             font-family: 'Montserrat', sans-serif;
-            color: #333;
+            color: #FFFFFF;
+            background-color: #08473F;
+            text-shadow: 3px 4px 19px rgba(0, 0, 0, 0.4);
             min-height: 100vh;
             margin: 0;
             display: flex;
             align-items: stretch; /* Растягиваем дочерние элементы по высоте */
-            background-image: url('{{ asset('storage/' . $invite['event']['image']) }}');
-            background-size: auto; /* Отменяем cover */
-            background-repeat: repeat; /* Повторяем фон */
-            background-position: center;
-            background-attachment: fixed;
             position: relative;
         }
 
@@ -29,6 +26,10 @@
             min-height: 100vh;
             padding: 20px 0;
             box-sizing: border-box;
+            background-image: url('{{ asset('storage/' . $invite['event']['image']) }}');
+            background-size: 150%;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
         .invitation-card {
@@ -38,10 +39,10 @@
             width: 90%;
             margin: auto;
             padding: 3rem;
-            background-color: rgba(255, 255, 255, 0.3);
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.3);
             display: flex;
             flex-direction: column;
         }
@@ -50,7 +51,7 @@
             font-family: 'Playfair Display', serif;
             font-weight: 700;
             font-size: clamp(1.8rem, 4vw, 2.2rem);
-            color: #2c3e50;
+            color: #fff;
             margin-bottom: 1.5rem;
             text-align: center;
         }
@@ -66,8 +67,7 @@
         .details {
             margin: 2rem 0;
             padding: 1.2rem;
-            background-color: rgba(255, 255, 255, 0.4);
-            border-left: 4px solid #2c3e50;
+            border-left: 4px solid #08473F;
         }
 
         .detail-item {
@@ -91,7 +91,7 @@
             font-size: 1.3rem;
             text-align: right;
             margin-top: 1.5rem;
-            color: #2c3e50;
+            color: #fff;
             font-style: italic;
         }
 
@@ -174,6 +174,22 @@
             .btn-cancel {
                 width: 100%;
                 max-width: 220px;
+            }
+        }
+
+        @media (min-width: 576px) {
+            .invitation-container {
+                background-size: 100%;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+        }
+
+        @media (min-width: 1080px) {
+            .invitation-container {
+                background-size: 60%;
+                background-position: center;
+                background-repeat: no-repeat;
             }
         }
 
