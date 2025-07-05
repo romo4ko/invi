@@ -63,7 +63,11 @@ class EventResource extends Resource
                             ->visibility('public')
                             ->directory('events')
                             ->nullable(),
-                    ])
+                    ]),
+                Forms\Components\ColorPicker::make('color')
+                    ->label('Цвет фона')
+                    ->default('#ffffff')
+                    ->nullable(),
             ]);
     }
 

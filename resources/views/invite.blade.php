@@ -10,7 +10,7 @@
         body {
             font-family: 'Montserrat', sans-serif;
             color: #FFFFFF;
-            background-color: #08473F;
+            background-color: {{ $invite['event']['color'] ?? '#08473F' }};
             text-shadow: 3px 4px 19px rgba(0, 0, 0, 0.4);
             min-height: 100vh;
             margin: 0;
@@ -67,7 +67,7 @@
         .details {
             margin: 2rem 0;
             padding: 1.2rem;
-            border-left: 4px solid #08473F;
+            border-left: 4px solid {{ $invite['event']['color'] ?? '#08473F' }};
         }
 
         .detail-item {
@@ -210,8 +210,10 @@
             <div class="greeting">
                 @if($invite['guest']['gender'] == 'female')
                     Уважаемая
-                @else
+                @elseif($invite['guest']['gender'] == 'male')
                     Уважаемый
+                @else
+                    Уважаемые
                 @endif
                 {{ $invite['guest']['name'] }} {{ $invite['guest']['patronymic'] }}
             </div>
@@ -238,19 +240,19 @@
             <div class="response-section">
                 @if(!isset($invite['approval']))
                     <div class="response-buttons">
-                        <button class="btn btn-accept btn-lg text-white" onclick="sendResponse(true)">С радостью приду!</button>
+                        <button class="btn btn-accept btn-lg text-white" onclick="sendResponse(true)">Планирую прийти</button>
                         <button class="btn btn-decline btn-lg text-white" onclick="sendResponse(false)">К сожалению, не смогу</button>
                     </div>
                 @elseif($invite['approval'] === true)
                     <div class="response-message text-success">
-                        Вы подтвердили участие! Ждём вас!
+                        Вы подтвердили участие! <br/>Жду вас.
                     </div>
                     <div class="response-buttons">
                         <button class="btn btn-cancel btn-lg text-white" onclick="sendResponse(null)">Отменить ответ</button>
                     </div>
                 @elseif($invite['approval'] === false)
                     <div class="response-message text-danger">
-                        Вы отказались от участия. Будем скучать!
+                        Вы отказались от участия. <br/>Очень жаль.
                     </div>
                     <div class="response-buttons">
                         <button class="btn btn-cancel btn-lg text-white" onclick="sendResponse(null)">Изменить решение</button>

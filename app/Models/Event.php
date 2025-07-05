@@ -13,6 +13,7 @@ class Event extends Model
         'datetime',
         'caption',
         'image',
+        'color',
     ];
 
     protected $casts = [

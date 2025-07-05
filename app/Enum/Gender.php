@@ -6,12 +6,14 @@ enum Gender: string
 {
     case MALE = 'male';
     case FEMALE = 'female';
+    case COUPLE = 'couple';
 
     public static function translations(): array
     {
         return [
             self::MALE->value => 'Мужской',
             self::FEMALE->value => 'Женский',
+            self::COUPLE->value => 'Пара',
         ];
     }
 
