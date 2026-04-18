@@ -295,6 +295,33 @@
             margin-top: 18px;
         }
 
+        .response-options {
+            margin-top: 18px;
+        }
+
+        .option-checkbox {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-main);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .option-checkbox input {
+            width: 18px;
+            height: 18px;
+            accent-color: color-mix(in srgb, var(--accent) 70%, white);
+            cursor: pointer;
+            flex: 0 0 auto;
+        }
+
+        .option-text {
+            font-size: 0.98rem;
+            line-height: 1.6;
+            color: rgba(255, 247, 238, 0.9);
+        }
+
         .action-button {
             appearance: none;
             border: 0;
@@ -463,13 +490,28 @@
                     </div>
 
                     @if(!isset($invite['approval']))
+                        <div class="response-options">
+                            <label class="option-checkbox" for="plus-one">
+                                <input type="checkbox" id="plus-one" @checked($invite['plus_one'] ?? false)>
+                                <span class="option-text">Буду не один / не одна</span>
+                            </label>
+                        </div>
                         <div class="response-buttons">
                             <button class="action-button primary" onclick="sendResponse(true)">Планирую прийти</button>
                             <button class="action-button secondary" onclick="sendResponse(false)">Не получится</button>
                         </div>
                     @elseif($invite['approval'] === true)
-                        <p class="response-message success">Супер, ты в списке. Очень жду тебя.</p>
+                        <p class="response-message success">
+                            Супер, ты в списке.@if($invite['plus_one'] ?? false) И +1 тоже учтён.@endif
+                        </p>
+                        <div class="response-options">
+                            <label class="option-checkbox" for="plus-one">
+                                <input type="checkbox" id="plus-one" @checked($invite['plus_one'] ?? false)>
+                                <span class="option-text">Буду не один / не одна</span>
+                            </label>
+                        </div>
                         <div class="response-buttons">
+                            <button class="action-button primary" onclick="sendResponse(true)">Сохранить</button>
                             <button class="action-button ghost" onclick="sendResponse(null)">Передумать</button>
                         </div>
                     @elseif($invite['approval'] === false)
@@ -486,6 +528,8 @@
 
 <script>
     function sendResponse(response) {
+        const plusOneCheckbox = document.getElementById('plus-one');
+
         fetch('/approve/{{ $invite['id'] }}', {
             method: 'POST',
             headers: {
@@ -493,7 +537,8 @@
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             },
             body: JSON.stringify({
-                approval: response
+                approval: response,
+                plus_one: response === true ? Boolean(plusOneCheckbox?.checked) : false
             })
         })
             .then(response => response.json())

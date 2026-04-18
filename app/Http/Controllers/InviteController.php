@@ -33,7 +33,12 @@ class InviteController extends BaseController
     {
         $invite = Invite::query()->findOrFail($id);
 
-        $invite->approval = $request->post('approval');
+        $approval = $request->post('approval');
+
+        $invite->approval = $approval;
+        $invite->plus_one = $approval === true || $approval === '1' || $approval === 1
+            ? (bool) $request->boolean('plus_one')
+            : false;
         $invite->save();
 
         return new JsonResponse([

@@ -3,11 +3,8 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Invite;
-use App\Models\User;
-use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Facades\DB;
 
 class StatsOverview extends BaseWidget
 {
@@ -21,6 +18,10 @@ class StatsOverview extends BaseWidget
             Stat::make(
                 'Подтвердили участие',
                 Invite::query()->where('approval')->count()
+            ),
+            Stat::make(
+                'Подтвердили с +1',
+                Invite::query()->where('approval', true)->where('plus_one', true)->count()
             ),
         ];
     }

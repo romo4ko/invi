@@ -87,6 +87,11 @@ class InviteResource extends Resource
                         }
                         return $invite->approval ? 'success' : 'danger';
                     }),
+                Tables\Columns\IconColumn::make('plus_one')
+                    ->label('+1')
+                    ->boolean()
+                    ->alignCenter()
+                    ->tooltip(fn (Invite $invite): string => $invite->plus_one ? 'Придёт с +1' : 'Без +1'),
                 Tables\Columns\TextColumn::make('slug')
                     ->formatStateUsing(
                         fn (Invite $invite): string => $invite->url
@@ -104,6 +109,8 @@ class InviteResource extends Resource
                         '0' => 'Отклонено',
                     ])
                     ->label('Статус'),
+                Tables\Filters\TernaryFilter::make('plus_one')
+                    ->label('+1'),
             ])
             ->actions([
                 Tables\Actions\Action::make('view')

@@ -10,11 +10,13 @@ class Invite extends Model
         'event_id',
         'guest_id',
         'approval',
+        'plus_one',
         'slug',
     ];
 
     protected $casts = [
         'approval' => 'boolean',
+        'plus_one' => 'boolean',
     ];
 
     public function event()
