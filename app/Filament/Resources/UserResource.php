@@ -12,7 +12,6 @@ use Filament\Tables;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
 {
@@ -45,11 +44,20 @@ class UserResource extends Resource
                     ->disabled()
                     ->required(),
                 Forms\Components\TextInput::make('password')
-                    ->hidden()
+                    ->label('Новый пароль')
                     ->password()
-                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                    ->revealable()
                     ->dehydrated(fn ($state) => filled($state))
-                    ->required(fn (string $context): bool => $context === 'create'),
+                    ->minLength(8)
+                    ->same('password_confirmation')
+                    ->required(fn (string $context): bool => $context === 'create')
+                    ->helperText('Оставь пустым, если пароль менять не нужно.'),
+                Forms\Components\TextInput::make('password_confirmation')
+                    ->label('Подтверждение пароля')
+                    ->password()
+                    ->revealable()
+                    ->dehydrated(false)
+                    ->requiredWith('password'),
                 Forms\Components\TextInput::make('name')->label('Имя')
                     ->required(),
             ]);
