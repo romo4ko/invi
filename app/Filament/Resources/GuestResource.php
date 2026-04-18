@@ -40,7 +40,6 @@ class GuestResource extends Resource
                     ->required()
                     ->label('Имя'),
                 Forms\Components\TextInput::make('surname')
-                    ->required()
                     ->label('Фамилия'),
                 Forms\Components\TextInput::make('patronymic')
                     ->label('Отчество'),
@@ -54,14 +53,9 @@ class GuestResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Имя')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('surname')
-                    ->label('Фамилия')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('patronymic')
-                    ->label('Отчество')
+                Tables\Columns\TextColumn::make('full_name')
+                    ->label('ФИО')
+                    ->state(fn (Guest $record): string => $record->full_name)
                     ->searchable(),
             ])
             ->filters([
