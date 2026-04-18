@@ -12,12 +12,14 @@ class Invite extends Model
         'guest_id',
         'approval',
         'plus_one',
+        'sent',
         'slug',
     ];
 
     protected $casts = [
         'approval' => 'boolean',
         'plus_one' => 'boolean',
+        'sent' => 'boolean',
     ];
 
     protected static function booted(): void

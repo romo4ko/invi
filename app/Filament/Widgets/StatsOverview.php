@@ -17,7 +17,7 @@ class StatsOverview extends BaseWidget
             ),
             Stat::make(
                 'Подтвердили участие',
-                Invite::query()->where('approval')->count()
+                Invite::query()->where('approval', true)->count()
             ),
             Stat::make(
                 'Подтвердили с +1',

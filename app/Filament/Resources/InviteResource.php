@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\InviteResource\Pages;
-use App\Filament\Resources\InviteResource\RelationManagers;
+use App\Models\Guest;
 use App\Models\Invite;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class InviteResource extends Resource
 {
     protected static ?string $model = Invite::class;
+
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
@@ -35,25 +37,72 @@ class InviteResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('guest_id')
-                    ->label('Гость')
-                    ->relationship('guest', 'name')
-                    ->required()
-                    ->searchable()
-                    ->disabled(fn (Invite $invite): bool => $invite->guest_id !== null)
-                    ->preload(),
-                Forms\Components\Select::make('event_id')
-                    ->label('Мероприятие')
-                    ->relationship('event', 'name')
-                    ->required()
-                    ->searchable()
-                    ->disabled(fn (Invite $invite): bool => $invite->event_id !== null)
-                    ->preload(),
-                Forms\Components\TextInput::make('slug')
-                    ->label('Ссылка')
-                    ->unique(Invite::class, 'slug', ignoreRecord: true)
-                    ->disabled(fn (Invite $invite): bool => $invite->slug !== null)
-                    ->default(fn (Invite $invite): string => $invite->slug ?? ''),
+                Forms\Components\Section::make('Основное')
+                    ->schema([
+                        Forms\Components\Select::make('guest_id')
+                            ->label('Гость')
+                            ->relationship('guest', 'name')
+                            ->getOptionLabelFromRecordUsing(fn (Guest $record): string => $record->full_name)
+                            ->required()
+                            ->searchable()
+                            ->preload()
+                            ->disabledOn('edit'),
+                        Forms\Components\Select::make('event_id')
+                            ->label('Мероприятие')
+                            ->relationship('event', 'name')
+                            ->required()
+                            ->searchable()
+                            ->preload()
+                            ->disabledOn('edit'),
+                        Forms\Components\TextInput::make('slug')
+                            ->label('Slug')
+                            ->unique(Invite::class, 'slug', ignoreRecord: true)
+                            ->disabledOn('edit')
+                            ->default(fn (Invite $invite): string => $invite->slug ?? ''),
+                        Forms\Components\Toggle::make('plus_one')
+                            ->label('+1')
+                            ->helperText('Придёт с кем-то')
+                            ->default(false),
+                    ])
+                    ->columns(2),
+                Forms\Components\Section::make('Информация')
+                    ->visibleOn('edit')
+                    ->schema([
+                        Forms\Components\Placeholder::make('guest_info')
+                            ->label('Гость')
+                            ->content(fn (Invite $record): string => $record->guest?->full_name ?: 'Не указан'),
+                        Forms\Components\Placeholder::make('event_info')
+                            ->label('Мероприятие')
+                            ->content(fn (Invite $record): string => $record->event?->name ?: 'Не указано'),
+                        Forms\Components\Placeholder::make('datetime_info')
+                            ->label('Дата и время мероприятия')
+                            ->content(fn (Invite $record): string => $record->event?->datetime?->format('d.m.Y H:i') ?: 'Не указаны'),
+                        Forms\Components\Placeholder::make('location_info')
+                            ->label('Место')
+                            ->content(fn (Invite $record): string => $record->event?->location ?: 'Не указано'),
+                        Forms\Components\Placeholder::make('approval_info')
+                            ->label('Статус ответа')
+                            ->content(function (Invite $record): string {
+                                if (is_null($record->approval)) {
+                                    return 'Без ответа';
+                                }
+
+                                return $record->approval ? 'Подтверждено' : 'Отклонено';
+                            }),
+                        Forms\Components\Placeholder::make('sent_info')
+                            ->label('Отправлено')
+                            ->content(fn (Invite $record): string => $record->sent ? 'Да' : 'Нет'),
+                        Forms\Components\Placeholder::make('url_info')
+                            ->label('Публичная ссылка')
+                            ->content(fn (Invite $record): string => $record->url),
+                        Forms\Components\Placeholder::make('created_at_info')
+                            ->label('Создано')
+                            ->content(fn (Invite $record): string => $record->created_at?->format('d.m.Y H:i') ?: 'Неизвестно'),
+                        Forms\Components\Placeholder::make('updated_at_info')
+                            ->label('Обновлено')
+                            ->content(fn (Invite $record): string => $record->updated_at?->format('d.m.Y H:i') ?: 'Неизвестно'),
+                    ])
+                    ->columns(2),
             ]);
     }
 
@@ -139,6 +188,7 @@ class InviteResource extends Resource
         return [
             'index' => Pages\ListInvites::route('/'),
             'create' => Pages\CreateInvite::route('/create'),
+            'edit' => Pages\EditInvite::route('/{record}/edit'),
         ];
     }
 }

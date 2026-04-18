@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\EventResource\RelationManagers;
 
+use App\Filament\Resources\InviteResource;
 use App\Models\Guest;
 use App\Models\Invite;
 use Filament\Forms;
@@ -77,6 +78,8 @@ class InvitesRelationManager extends RelationManager
                 Tables\Columns\IconColumn::make('plus_one')
                     ->label('+1')
                     ->boolean(),
+                Tables\Columns\ToggleColumn::make('sent')
+                    ->label('Отправлено'),
                 Tables\Columns\TextColumn::make('slug')
                     ->label('Ссылка')
                     ->formatStateUsing(fn (Invite $record): string => $record->url)
@@ -131,6 +134,7 @@ class InvitesRelationManager extends RelationManager
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->recordUrl(fn (Invite $record): string => InviteResource::getUrl('edit', ['record' => $record]));
     }
 }
