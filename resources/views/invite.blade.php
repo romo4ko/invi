@@ -4,266 +4,485 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Приглашение</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Montserrat', sans-serif;
-            color: #FFFFFF;
-            background-color: {{ $invite['event']['color'] ?? '#08473F' }};
-            text-shadow: 3px 4px 19px rgba(0, 0, 0, 0.4);
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            align-items: stretch; /* Растягиваем дочерние элементы по высоте */
-            position: relative;
+        :root {
+            --accent: {{ $invite['event']['color'] ?? '#9f7a4c' }};
+            --accent-soft: color-mix(in srgb, var(--accent) 36%, white);
+            --paper: rgba(12, 15, 20, 0.7);
+            --paper-strong: rgba(8, 10, 14, 0.88);
+            --line: rgba(255, 255, 255, 0.14);
+            --text-main: rgba(255, 248, 239, 0.96);
+            --text-muted: rgba(255, 244, 231, 0.72);
+            --success: #7ed6a2;
+            --danger: #ff9c9c;
+            --shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
         }
 
-        .invitation-container {
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Manrope', sans-serif;
+            color: var(--text-main);
+            background:
+                radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 40%, transparent) 0%, transparent 34%),
+                radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.12) 0%, transparent 28%),
+                linear-gradient(135deg, #0c1015 0%, #111925 42%, #1b2230 100%);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: underline;
+            text-decoration-color: currentColor;
+            text-underline-offset: 0.16em;
+        }
+
+        a:hover,
+        a:focus-visible {
+            color: inherit;
+        }
+
+        .scene {
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .scene::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg, rgba(5, 8, 12, 0.3), rgba(5, 8, 12, 0.82)),
+                url('{{ asset('storage/' . $invite['event']['image']) }}') center/cover no-repeat;
+            transform: scale(1.05);
+            filter: saturate(1.08) contrast(1.05) brightness(0.65);
+            z-index: -3;
+        }
+
+        .scene::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.14), transparent 20%),
+                radial-gradient(circle at 80% 30%, color-mix(in srgb, var(--accent) 40%, transparent), transparent 24%),
+                linear-gradient(180deg, rgba(7, 9, 12, 0.15), rgba(7, 9, 12, 0.5));
+            z-index: -2;
+        }
+
+        .layout {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.15fr);
+            gap: 32px;
+            align-items: center;
+            padding: 40px 0;
+        }
+
+        .hero-copy {
+            align-self: stretch;
             display: flex;
             flex-direction: column;
-            width: 100%;
-            min-height: 100vh;
-            padding: 20px 0;
-            box-sizing: border-box;
-            background-image: url('{{ asset('storage/' . $invite['event']['image']) }}');
-            background-size: 150%;
-            background-position: center;
-            background-repeat: no-repeat;
+            justify-content: center;
+            padding: 32px 0;
+            min-width: 0;
+        }
+
+        .hero-title {
+            margin: 0 0 18px;
+            max-width: 560px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.9rem, 5.2vw, 5.4rem);
+            line-height: 0.98;
+            letter-spacing: -0.04em;
+            text-wrap: balance;
+            overflow-wrap: anywhere;
+        }
+
+        .hero-subtitle {
+            max-width: 440px;
+            font-size: 1.02rem;
+            line-height: 1.75;
+            color: var(--text-muted);
         }
 
         .invitation-card {
             position: relative;
-            z-index: 10;
-            max-width: 800px;
-            width: 90%;
-            margin: auto;
-            padding: 3rem;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(5px);
-            background-color: rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border-radius: 32px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04)),
+                var(--paper);
+            backdrop-filter: blur(22px);
+            box-shadow: var(--shadow);
+        }
+
+        .invitation-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at top right, color-mix(in srgb, var(--accent) 26%, transparent) 0%, transparent 34%),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 36%);
+            pointer-events: none;
+        }
+
+        .card-inner {
+            position: relative;
+            padding: clamp(28px, 5vw, 52px);
+        }
+
+        .card-topline {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 28px;
+            color: var(--text-muted);
+            font-size: 0.82rem;
+            letter-spacing: 0.26em;
+            text-transform: uppercase;
+        }
+
+        .crest {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: grid;
+            place-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 30%, rgba(255, 255, 255, 0.12)), rgba(255, 255, 255, 0.04));
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+        }
+
+        .crest::before {
+            content: "✦";
+            font-size: 1.15rem;
+            color: var(--text-main);
         }
 
         .greeting {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: clamp(1.8rem, 4vw, 2.2rem);
-            color: #fff;
-            margin-bottom: 1.5rem;
-            text-align: center;
+            margin: 0;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.2rem, 5vw, 4rem);
+            line-height: 0.98;
+            letter-spacing: -0.03em;
+            text-wrap: balance;
+        }
+
+        .guest-intro {
+            margin: 18px 0 0;
+            max-width: 540px;
+            color: var(--text-muted);
+            font-size: 0.98rem;
+            line-height: 1.8;
         }
 
         .content {
+            margin: 34px 0;
+            padding: 28px 0;
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            font-size: 1.02rem;
+            line-height: 1.9;
+            color: rgba(255, 247, 238, 0.9);
+        }
+
+        .content :first-child {
+            margin-top: 0;
+        }
+
+        .content :last-child {
+            margin-bottom: 0;
+        }
+
+        .content p + p {
+            margin-top: 1.1em;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+
+        .detail-card {
+            padding: 18px 18px 20px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .detail-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            color: var(--text-muted);
+            font-size: 0.76rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+
+        .detail-label svg {
+            width: 15px;
+            height: 15px;
+            color: var(--accent-soft);
+        }
+
+        .detail-value {
             font-size: 1rem;
             line-height: 1.7;
-            margin-bottom: 2rem;
-            text-align: center;
-            flex-grow: 1;
-        }
-
-        .details {
-            margin: 2rem 0;
-            padding: 1.2rem;
-            border-left: 4px solid {{ $invite['event']['color'] ?? '#08473F' }};
-        }
-
-        .detail-item {
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .detail-icon {
-            margin-right: 10px;
-            color: #d4af37;
-            font-size: 1.1rem;
-        }
-
-        .response-section {
-            margin-top: auto; /* Прижимаем к низу */
+            color: var(--text-main);
         }
 
         .caption {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.3rem;
-            text-align: right;
-            margin-top: 1.5rem;
-            color: #fff;
-            font-style: italic;
+            margin: 0 0 30px;
+            padding-left: 18px;
+            border-left: 2px solid color-mix(in srgb, var(--accent) 74%, white);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.35rem, 2vw, 1.75rem);
+            line-height: 1.35;
+            color: rgba(255, 245, 235, 0.94);
+        }
+
+        .response-section {
+            padding: 24px;
+            border-radius: 28px;
+            background: var(--paper-strong);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .response-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .response-title {
+            margin: 0;
+            font-size: 0.92rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .response-note {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: rgba(255, 247, 238, 0.78);
         }
 
         .response-buttons {
             display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-top: 1.5rem;
             flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 18px;
         }
 
-        .btn-accept {
-            background-color: #28a745;
-            border-color: #28a745;
-            min-width: 120px;
+        .action-button {
+            appearance: none;
+            border: 0;
+            border-radius: 999px;
+            padding: 16px 24px;
+            min-width: 196px;
+            font: inherit;
+            font-weight: 700;
+            letter-spacing: 0.01em;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease, opacity 0.25s ease;
         }
 
-        .btn-decline {
-            background-color: #dc3545;
-            border-color: #dc3545;
-            min-width: 120px;
+        .action-button:hover {
+            transform: translateY(-1px);
         }
 
-        .btn-cancel {
-            background-color: #6c757d;
-            border-color: #6c757d;
-            min-width: 120px;
+        .action-button:focus-visible {
+            outline: 2px solid rgba(255, 255, 255, 0.8);
+            outline-offset: 3px;
         }
 
-        .btn-accept:hover,
-        .btn-accept:active,
-        .btn-accept:focus {
-            background-color: #28a745 !important;
-            border-color: #28a745 !important;
-            opacity: 0.6 !important;
+        .action-button.primary {
+            background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 60%, white), var(--accent));
+            color: #111;
+            box-shadow: 0 14px 34px color-mix(in srgb, var(--accent) 24%, transparent);
         }
 
-        .btn-decline:hover,
-        .btn-decline:active,
-        .btn-decline:focus {
-            background-color: #dc3545 !important;
-            border-color: #dc3545 !important;
-            opacity: 0.6 !important;
+        .action-button.secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
-        .btn-cancel:hover,
-        .btn-cancel:active,
-        .btn-cancel:focus {
-            background-color: #6c757d !important;
-            border-color: #6c757d !important;
-            opacity: 0.6 !important;
+        .action-button.ghost {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-width: 180px;
         }
 
         .response-message {
-            text-align: center;
-            margin-top: 1rem;
-            font-weight: bold;
-            padding: 0 10px;
+            margin: 0;
+            font-size: 1rem;
+            line-height: 1.75;
         }
 
-        @media (max-width: 576px) {
-            .invitation-card {
-                padding: 1.5rem;
-                width: 90%;
+        .response-message.success {
+            color: var(--success);
+        }
+
+        .response-message.danger {
+            color: var(--danger);
+        }
+
+        @media (max-width: 980px) {
+            .layout {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 24px 0;
             }
 
-            .details {
-                padding: 1rem;
-                margin: 1.5rem 0;
+            .hero-copy {
+                padding: 4px 6px;
+            }
+        }
+
+        @media (min-width: 981px) {
+            .layout {
+                grid-template-columns: minmax(0, 0.88fr) minmax(380px, 1.12fr);
+            }
+        }
+
+        @media (max-width: 720px) {
+            .layout {
+                width: min(100% - 20px, 640px);
+            }
+
+            .hero-title {
+                max-width: none;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-topline,
+            .response-head {
+                flex-direction: column;
+                align-items: flex-start;
             }
 
             .response-buttons {
                 flex-direction: column;
-                align-items: center;
-                gap: 0.8rem;
             }
 
-            .btn-accept,
-            .btn-decline,
-            .btn-cancel {
+            .action-button {
                 width: 100%;
-                max-width: 220px;
+                min-width: 0;
             }
-        }
-
-        @media (min-width: 576px) {
-            .invitation-container {
-                background-size: 100%;
-                background-position: center;
-                background-repeat: no-repeat;
-            }
-        }
-
-        @media (min-width: 1080px) {
-            .invitation-container {
-                background-size: 60%;
-                background-position: center;
-                background-repeat: no-repeat;
-            }
-        }
-
-        .btn-accept,
-        .btn-decline,
-        .btn-cancel {
-            padding: 0.5rem 1rem; /* Уменьшен padding */
-            font-size: 0.9rem; /* Уменьшен размер шрифта */
-            min-width: 100px; /* Уменьшен минимальный размер */
         }
     </style>
 </head>
 <body>
-
-<div class="invitation-container">
-    <div class="invitation-card">
-        <div class="card-content">
-            <div class="greeting">
-                @if($invite['guest']['gender'] == 'female')
-                    Уважаемая
-                @elseif($invite['guest']['gender'] == 'male')
-                    Уважаемый
-                @else
-                    Уважаемые
-                @endif
-                {{ $invite['guest']['name'] }} {{ $invite['guest']['patronymic'] }}
+<div class="scene">
+    <div class="layout">
+        <section class="hero-copy">
+            <div>
+                <h1 class="hero-title">Вечер, на который очень хочется позвать именно тебя</h1>
+                <p class="hero-subtitle">
+                    Всё просто: классный повод встретиться, провести время вместе и создать хорошие воспоминания.
+                </p>
             </div>
+        </section>
 
-            <div class="content">
-                {!! $invite['event']['content'] !!}
-            </div>
-
-            <div class="caption">
-                {{ $invite['event']['caption'] }}
-            </div>
-
-            <div class="details">
-                <div class="detail-item">
-                    <span class="detail-icon">📅</span>
-                    <span>{{ \Carbon\Carbon::parse($invite['event']['datetime'])->translatedFormat('j F H:i') }}</span>
+        <section class="invitation-card">
+            <div class="card-inner">
+                <div class="card-topline">
+                    <span>Приглашение</span>
+                    <div class="crest" aria-hidden="true"></div>
                 </div>
-                <div class="detail-item">
-                    <span class="detail-icon">📍</span>
-                    <span>{{ $invite['event']['location'] }}</span>
+
+                <h2 class="greeting">
+                    {{ $invite['guest']['name'] }}@if(!empty($invite['guest']['patronymic'])) {{ $invite['guest']['patronymic'] }}@endif
+                </h2>
+
+                <p class="guest-intro">
+                    Очень хочется увидеть тебя среди гостей. Ниже всё, что нужно: детали события и быстрый ответ в один клик.
+                </p>
+
+                <div class="content">
+                    {!! $invite['event']['content'] !!}
+                </div>
+
+                <div class="details-grid">
+                    <div class="detail-card">
+                        <div class="detail-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M8 2v4"></path>
+                                <path d="M16 2v4"></path>
+                                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                                <path d="M3 10h18"></path>
+                            </svg>
+                            Когда
+                        </div>
+                        <div class="detail-value">{{ \Carbon\Carbon::parse($invite['event']['datetime'])->translatedFormat('j F H:i') }}</div>
+                    </div>
+
+                    <div class="detail-card">
+                        <div class="detail-label">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M12 21s7-4.35 7-11a7 7 0 1 0-14 0c0 6.65 7 11 7 11Z"></path>
+                                <circle cx="12" cy="10" r="2.5"></circle>
+                            </svg>
+                            Где
+                        </div>
+                        <div class="detail-value">{!! $invite['event']['location'] !!}</div>
+                    </div>
+                </div>
+
+                <p class="caption">{{ $invite['event']['caption'] }}</p>
+
+                <div class="response-section">
+                    <div class="response-head">
+                        <h3 class="response-title">Сможешь прийти?</h3>
+                        <p class="response-note">Дай знать, получится ли у тебя быть.</p>
+                    </div>
+
+                    @if(!isset($invite['approval']))
+                        <div class="response-buttons">
+                            <button class="action-button primary" onclick="sendResponse(true)">Планирую прийти</button>
+                            <button class="action-button secondary" onclick="sendResponse(false)">Не получится</button>
+                        </div>
+                    @elseif($invite['approval'] === true)
+                        <p class="response-message success">Супер, ты в списке. Очень жду тебя.</p>
+                        <div class="response-buttons">
+                            <button class="action-button ghost" onclick="sendResponse(null)">Передумать</button>
+                        </div>
+                    @elseif($invite['approval'] === false)
+                        <p class="response-message danger">Жаль, но если планы поменяются, ответ можно обновить.</p>
+                        <div class="response-buttons">
+                            <button class="action-button ghost" onclick="sendResponse(null)">Изменить ответ</button>
+                        </div>
+                    @endif
                 </div>
             </div>
-
-            <div class="response-section">
-                @if(!isset($invite['approval']))
-                    <div class="response-buttons">
-                        <button class="btn btn-accept btn-lg text-white" onclick="sendResponse(true)">Планирую прийти</button>
-                        <button class="btn btn-decline btn-lg text-white" onclick="sendResponse(false)">К сожалению, не смогу</button>
-                    </div>
-                @elseif($invite['approval'] === true)
-                    <div class="response-message text-success">
-                        Вы подтвердили участие! <br/>Жду вас.
-                    </div>
-                    <div class="response-buttons">
-                        <button class="btn btn-cancel btn-lg text-white" onclick="sendResponse(null)">Отменить ответ</button>
-                    </div>
-                @elseif($invite['approval'] === false)
-                    <div class="response-message text-danger">
-                        Вы отказались от участия. <br/>Очень жаль.
-                    </div>
-                    <div class="response-buttons">
-                        <button class="btn btn-cancel btn-lg text-white" onclick="sendResponse(null)">Изменить решение</button>
-                    </div>
-                @endif
-            </div>
-        </div>
+        </section>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
     function sendResponse(response) {
@@ -285,10 +504,9 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Произошла ошибка. Пожалуйста, попробуйте ещё раз.');
+                alert('Что-то пошло не так. Попробуй ещё раз.');
             });
     }
 </script>
-
 </body>
 </html>
